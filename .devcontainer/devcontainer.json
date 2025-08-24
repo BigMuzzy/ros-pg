@@ -1,6 +1,6 @@
 // See https://aka.ms/vscode-remote/devcontainer.json for format details.
 {
-	"dockerFile": "Dockerfile",
+	"dockerFile": "ROS2 Playgrount",
 	"build": {
 		"args": {
 			"WORKSPACE": "${containerWorkspaceFolder}"
@@ -44,5 +44,6 @@
 				"zachflower.uncrustify"
 			]
 		}
-	}
+	},
+	"postCreateCommand": "pip3 install --break-system-packages -r requirements.txt"
 }

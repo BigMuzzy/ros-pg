@@ -1,4 +1,4 @@
-FROM althack/ros2:humble-dev 
+FROM althack/ros2:kilted-dev 
 
 # ** [Optional] Uncomment this section to install additional packages. **
 #

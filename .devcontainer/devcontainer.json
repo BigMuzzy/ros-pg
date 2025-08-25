@@ -1,7 +1,9 @@
 // See https://aka.ms/vscode-remote/devcontainer.json for format details.
 {
-	"dockerFile": "ROS2 Playgrount",
+	"name": "ROS2 Playgrount",
+	"dockerFile": "Dockerfile",
 	"build": {
+		"context": ".",
 		"args": {
 			"WORKSPACE": "${containerWorkspaceFolder}"
 		}

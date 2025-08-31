@@ -11,12 +11,21 @@ RUN apt-get update \
    && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-ros2-controllers \
    && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-moveit \
    && apt-get -y install --no-install-recommends libserial-dev \
+   && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-navigation2 \
+   && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-nav2-bringup \
+   && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-turtlebot3* \
+   && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-nav2-simple-commander \
+   && apt-get -y install --no-install-recommends x11-xserver-utils \
+   && apt-get -y install --no-install-recommends x11-apps \
 #    #
 #    # Clean up
    && apt-get autoremove -y \
    && apt-get clean -y \
    && rm -rf /var/lib/apt/lists/*
 ENV DEBIAN_FRONTEND=dialog
+
+ARG USERNAME
+RUN usermod -aG dialout ${USERNAME}
 
 # Set up auto-source of workspace for ros user
 ARG WORKSPACE

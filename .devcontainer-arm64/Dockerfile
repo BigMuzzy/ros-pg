@@ -28,26 +28,38 @@ RUN apt-get update \
    && rm -rf /var/lib/apt/lists/*
 ENV DEBIAN_FRONTEND=dialog
 
-# Create ros user for ARM64 (similar to althack image)
 ARG USERNAME=ros
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
-# Create the user
-RUN groupadd --gid $USER_GID $USERNAME \
-    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
-    && apt-get update \
-    && apt-get install -y sudo \
-    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
-    && chmod 0440 /etc/sudoers.d/$USERNAME
+# Check if "ubuntu" user exists, delete it if it does, then create the desired user
+RUN if getent passwd ubuntu > /dev/null 2>&1; then \
+        userdel -r ubuntu && \
+        echo "Deleted existing ubuntu user"; \
+    fi && \
+    groupadd --gid $USER_GID $USERNAME && \
+    useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USERNAME && \
+    echo "Created new user $USERNAME"
 
-# Add to dialout group for serial access
+# Add sudo support for the non-root user
+RUN apt-get update && apt-get install -y sudo \
+  && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME\
+  && chmod 0440 /etc/sudoers.d/$USERNAME \
+  && rm -rf /var/lib/apt/lists/*
+
+# Set up autocompletion for user
+RUN apt-get update && apt-get install -y --no-install-recommends git-core bash-completion \
+  && echo "if [ -f /opt/ros/${ROS_DISTRO}/setup.bash ]; then source /opt/ros/${ROS_DISTRO}/setup.bash; fi" >> /home/$USERNAME/.bashrc \
+  && echo "if [ -f /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash ]; then source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash; fi" >> /home/$USERNAME/.bashrc \
+  && rm -rf /var/lib/apt/lists/*
+
+ARG USERNAME
 RUN usermod -aG dialout ${USERNAME}
+
+# Install sudo for devcontainer user management
+RUN apt-get update && apt-get install -y sudo && apt-get clean
+
 
 # Set up auto-source of workspace for ros user
 ARG WORKSPACE
-RUN echo "source /opt/ros/kilted/setup.bash" >> /home/ros/.bashrc
 RUN echo "if [ -f ${WORKSPACE}/install/setup.bash ]; then source ${WORKSPACE}/install/setup.bash; fi" >> /home/ros/.bashrc
-
-# Switch to ros user
-USER $USERNAME

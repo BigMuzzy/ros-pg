@@ -3,7 +3,7 @@
 	"name": "ROS2 Playground (ARM64/RPi5)",
 	"dockerFile": "Dockerfile",
 	"build": {
-		"context": "..",
+		"context": ".",
 		"args": {
 			"WORKSPACE": "${containerWorkspaceFolder}",
 			"USERNAME": "ros"
@@ -16,18 +16,18 @@
 		"--security-opt=seccomp:unconfined",
 		"--security-opt=apparmor:unconfined",
 		"--volume=/tmp/.X11-unix:/tmp/.X11-unix",
-		"--env=DISPLAY=${localEnv:DISPLAY}",
+		"--volume=/mnt/wslg:/mnt/wslg",
+		"--env=DISPLAY=:0",
 		"--ipc=host",
 		"-v", "/dev:/dev",
-		"--device-cgroup-rule=c 188:* rwm",
-		"--privileged"
+		"--device-cgroup-rule=c 188:* rwm"
 	],
 	"containerEnv": {
-		"DISPLAY": "${localEnv:DISPLAY}",
+		"DISPLAY": ":0", // Needed for GUI try ":0" for windows
 		"WAYLAND_DISPLAY": "${localEnv:WAYLAND_DISPLAY}",
 		"XDG_RUNTIME_DIR": "${localEnv:XDG_RUNTIME_DIR}",
 		"PULSE_SERVER": "${localEnv:PULSE_SERVER}",
-		"LIBGL_ALWAYS_SOFTWARE": "1"
+		"LIBGL_ALWAYS_SOFTWARE": "1" // Needed for software rendering of opengl
 	},
 	// Set *default* container specific settings.json values on container create.
 	"customizations": {

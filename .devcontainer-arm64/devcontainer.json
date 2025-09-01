@@ -1,9 +1,9 @@
-// See https://aka.ms/vscode-remote/devcontainer.json for format details.
+// DevContainer configuration for ARM64/RPi5 
 {
-	"name": "ROS2 Playground (x86_64)",
+	"name": "ROS2 Playground (ARM64/RPi5)",
 	"dockerFile": "Dockerfile",
 	"build": {
-		"context": ".",
+		"context": "..",
 		"args": {
 			"WORKSPACE": "${containerWorkspaceFolder}",
 			"USERNAME": "ros"
@@ -16,18 +16,18 @@
 		"--security-opt=seccomp:unconfined",
 		"--security-opt=apparmor:unconfined",
 		"--volume=/tmp/.X11-unix:/tmp/.X11-unix",
-		"--volume=/mnt/wslg:/mnt/wslg",
-		"--env=DISPLAY=:0",
+		"--env=DISPLAY=${localEnv:DISPLAY}",
 		"--ipc=host",
 		"-v", "/dev:/dev",
-		"--device-cgroup-rule=c 188:* rwm"
+		"--device-cgroup-rule=c 188:* rwm",
+		"--privileged"
 	],
 	"containerEnv": {
-		"DISPLAY": ":0", // Needed for GUI try ":0" for windows
+		"DISPLAY": "${localEnv:DISPLAY}",
 		"WAYLAND_DISPLAY": "${localEnv:WAYLAND_DISPLAY}",
 		"XDG_RUNTIME_DIR": "${localEnv:XDG_RUNTIME_DIR}",
 		"PULSE_SERVER": "${localEnv:PULSE_SERVER}",
-		"LIBGL_ALWAYS_SOFTWARE": "1" // Needed for software rendering of opengl
+		"LIBGL_ALWAYS_SOFTWARE": "1"
 	},
 	// Set *default* container specific settings.json values on container create.
 	"customizations": {

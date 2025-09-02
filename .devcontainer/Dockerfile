@@ -17,6 +17,8 @@ RUN apt-get update \
    && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-nav2-simple-commander \
    && apt-get -y install --no-install-recommends x11-xserver-utils \
    && apt-get -y install --no-install-recommends x11-apps \
+   && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-tf2-tools \
+   && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-rqt-graph ros-${ROS_DISTRO}-rqt-common-plugins \
 #    #
 #    # Clean up
    && apt-get autoremove -y \

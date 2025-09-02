@@ -24,11 +24,23 @@ This repository supports multiple DevContainer configurations for different arch
 3. VS Code will use `.devcontainer/devcontainer.json` automatically
 
 ### For ARM64/Raspberry Pi Development
+
+#### Option 1: VS Code
 1. Open the project in VS Code
 2. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac)
 3. Type "Dev Containers: Reopen in Container"
 4. Select "From 'devcontainer.json'..."
 5. Choose the `.devcontainer-arm64/devcontainer.json` configuration
+
+#### Option 2: DevContainer CLI
+1. Start the container:
+   ```bash
+   sudo devcontainer up --workspace-folder . --config ./.devcontainer-arm64/devcontainer.json
+   ```
+2. Connect to the running container:
+   ```bash
+   sudo devcontainer exec --workspace-folder . --config ./.devcontainer-arm64/devcontainer.json /bin/bash
+   ```
 
 ## Key Differences
 

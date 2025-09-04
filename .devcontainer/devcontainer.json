@@ -20,7 +20,8 @@
 		"--env=DISPLAY=:0",
 		"--ipc=host",
 		"-v", "/dev:/dev",
-		"--device-cgroup-rule=c 188:* rwm"
+		"--device-cgroup-rule=c 188:* rwm",
+		"--device-cgroup-rule=c 166:* rwm"
 	],
 	"containerEnv": {
 		"DISPLAY": ":0", // Needed for GUI try ":0" for windows

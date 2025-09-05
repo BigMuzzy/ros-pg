@@ -14,20 +14,9 @@ To visualize the robot in RViz:
 
 1. Launch the robot state publisher:
 ```bash
-ros2 launch lunohod-1 rsp.launch.py use_sim_time:=true
+ros2 launch lunohod-1 rsp.launch.py (use_sim_time:=true only if using Gazebo)
 ```
-
-2. In a separate terminal, start the joint state publisher:
-```bash
-ros2 run joint_state_publisher joint_state_publisher
-```
-
-3. Launch RViz:
-```bash
-rviz2
-```
-
-4. In RViz:
+2. In RViz:
    - Set **Fixed Frame** to `base_link`
    - Add a **RobotModel** display
    - The robot should appear with a white chassis, blue wheels, and black caster wheel
@@ -38,3 +27,19 @@ rviz2
 - `chassis` (robot body)
 - `left_wheel` / `right_wheel` (drive wheels)
 - `caster_wheel` (support wheel)
+
+## Verification Steps
+
+### Test URDF compilation:
+```bash
+cd ~/your_workspace
+xacro src/lunohod-1/description/robot.urdf.xacro > /tmp/robot.urdf
+check_urdf /tmp/robot.urdf
+```
+
+### Visualize the tree:
+```bash
+urdf_to_graphiz /tmp/robot.urdf
+```
+
+Use [GraphvizOnline](https://dreampuf.github.io/GraphvizOnline/) to visualize the generated graph.

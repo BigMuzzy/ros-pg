@@ -21,6 +21,7 @@ RUN apt-get update \
    && apt-get -y install --no-install-recommends python3-pip \
    && apt-get -y install --no-install-recommends python3-dev \
    && apt-get -y install --no-install-recommends build-essential \
+   && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-rplidar-ros \
 #    #
 #    # Clean up
    && apt-get autoremove -y \

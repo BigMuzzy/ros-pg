@@ -19,6 +19,10 @@ RUN apt-get update \
    && apt-get -y install --no-install-recommends x11-apps \
    && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-tf2-tools \
    && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-rqt-graph ros-${ROS_DISTRO}-rqt-common-plugins \
+   && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-twist-mux \
+   && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-joy \
+   && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-teleop-twist-joy \
+   && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-teleop-twist-keyboard \
 #    #
 #    # Clean up
    && apt-get autoremove -y \

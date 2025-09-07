@@ -21,6 +21,10 @@ RUN apt-get update \
    && apt-get -y install --no-install-recommends python3-pip \
    && apt-get -y install --no-install-recommends python3-dev \
    && apt-get -y install --no-install-recommends build-essential \
+   && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-twist-mux \
+   && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-joy \
+   && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-teleop-twist-joy \
+   && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-teleop-twist-keyboard \
 #    #
 #    # Clean up
    && apt-get autoremove -y \

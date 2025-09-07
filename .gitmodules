@@ -1,0 +1,6 @@
+[submodule "src/diffdrive_arduino"]
+	path = src/diffdrive_arduino
+	url = https://github.com/joshnewans/diffdrive_arduino.git
+[submodule "src/sllidar_ros2"]
+	path = src/sllidar_ros2
+	url = https://github.com/Slamtec/sllidar_ros2.git

@@ -4,3 +4,6 @@
 [submodule "src/sllidar_ros2"]
 	path = src/sllidar_ros2
 	url = https://github.com/Slamtec/sllidar_ros2.git
+[submodule "src/serial"]
+	path = src/serial
+	url = https://github.com/joshnewans/serial

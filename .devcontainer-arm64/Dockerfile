@@ -25,6 +25,7 @@ RUN apt-get update \
    && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-joy \
    && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-teleop-twist-joy \
    && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-teleop-twist-keyboard \
+   && apt-get -y install --no-install-recommends v4l-utils \
 #    #
 #    # Clean up
    && apt-get autoremove -y \
@@ -59,6 +60,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends git-core bash-c
 
 ARG USERNAME
 RUN usermod -aG dialout ${USERNAME}
+RUN usermod -aG video ${USERNAME}
 
 # Install sudo for devcontainer user management
 RUN apt-get update && apt-get install -y sudo && apt-get clean

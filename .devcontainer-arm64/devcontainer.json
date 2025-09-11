@@ -21,7 +21,8 @@
 		"--ipc=host",
 		"-v", "/dev:/dev",
 		"--device-cgroup-rule=c 188:* rwm",
-		"--device-cgroup-rule=c 166:* rwm"
+		"--device-cgroup-rule=c 166:* rwm",
+		"--device-cgroup-rule=c 81:* rwm"
 	],
 	"containerEnv": {
 		"DISPLAY": ":0", // Needed for GUI try ":0" for windows

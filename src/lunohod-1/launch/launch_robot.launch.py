@@ -20,12 +20,26 @@ def generate_launch_description():
     # Include the robot_state_publisher launch file, provided by our own package. Force sim time to be enabled
     # !!! MAKE SURE YOU SET THE PACKAGE NAME CORRECTLY !!!
 
-    package_name='lunohod-1' #<--- CHANGE ME
+    package_name='lunohod-1'
 
     rsp = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(
                     get_package_share_directory(package_name),'launch','rsp.launch.py'
                 )]), launch_arguments={'use_sim_time': 'false', 'use_ros2_control': 'true'}.items()
+    )
+
+    # Include RPLidar launch file
+    rplidar = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(
+                    get_package_share_directory(package_name),'launch','rplidar.launch.py'
+                )])
+    )
+
+    # Include Camera launch file
+    camera = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(
+                    get_package_share_directory(package_name),'launch','camera.launch.py'
+                )])
     )
 
     # joystick = IncludeLaunchDescription(
@@ -107,6 +121,8 @@ def generate_launch_description():
     # Launch them all!
     return LaunchDescription([
         rsp,
+        rplidar,
+        camera,
         # joystick,
         twist_mux,
         delayed_controller_manager,

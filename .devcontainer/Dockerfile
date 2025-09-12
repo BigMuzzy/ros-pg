@@ -7,6 +7,9 @@ RUN apt-get update \
    && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-xacro \
    && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-joint-state-publisher-gui \
    && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-ros-gz \
+   && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-ros-gz-sim \
+   && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-ros-gz-bridge \
+   && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-gz-ros2-control \
    && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-ros2-control \
    && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-ros2-controllers \
    && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-moveit \

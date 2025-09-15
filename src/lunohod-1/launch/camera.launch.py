@@ -45,9 +45,9 @@ def generate_launch_description():
             parameters=[{
                 'use_sim_time': use_sim_time,
                 'video_device': video_device,
-                'image_size': [640, 480], # Fixed: Use integer array directly
+                'image_size': [320, 240], # Fixed: Use integer array directly
                 'camera_frame_id': camera_frame_id,
-                'fps': fps,
+                'fps': 10,
                 'pixel_format': 'YUYV',  # Common format for USB cameras
                 'camera_info_url': '',   # Add camera calibration file path if available
                 }],

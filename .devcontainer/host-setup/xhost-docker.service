@@ -1,0 +1,13 @@
+[Unit]
+Description=Allow Docker containers to access X11 display
+After=graphical-session.target
+Wants=graphical-session.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/xhost +local:docker
+ExecStop=/usr/bin/xhost -local:docker
+RemainAfterExit=yes
+
+[Install]
+WantedBy=graphical-session.target

@@ -15,11 +15,16 @@ def generate_launch_description():
 
     package_name='lunohod-1'
 
+    arduino_device = LaunchConfiguration('arduino_device')
+
     # Robot State Publisher - Start immediately
     rsp = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(
                     get_package_share_directory(package_name),'launch','rsp.launch.py'
-                )]), launch_arguments={'use_sim_time': 'false', 'use_ros2_control': 'true'}.items()
+                )]), launch_arguments={
+                    'arduino_device': arduino_device,
+                    'use_sim_time': 'false',
+                    'use_ros2_control': 'true'}.items()
     )
 
     # Lidar - Start after a short delay to ensure USB is ready

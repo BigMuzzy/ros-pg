@@ -1,6 +1,6 @@
 image_width: 320
 image_height: 240
-camera_name: lunohod_camera
+camera_name: "microsoft®_lifecam_cinema(tm):"
 camera_matrix:
   rows: 3
   cols: 3

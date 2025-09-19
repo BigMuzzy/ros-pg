@@ -6,7 +6,7 @@ from launch_ros.actions import Node
 def generate_launch_description():
 
     channel_type =  LaunchConfiguration('channel_type', default='serial')
-    serial_port = LaunchConfiguration('serial_port', default='/dev/ttyUSB1')
+    lidar_port = LaunchConfiguration('lidar_port', default='/dev/ttyUSB1')
     serial_baudrate = LaunchConfiguration('serial_baudrate', default='460800')
     frame_id = LaunchConfiguration('frame_id', default='laser_frame')
     inverted = LaunchConfiguration('inverted', default='false')
@@ -20,7 +20,7 @@ Node(
             executable='sllidar_node',
             name='sllidar_node',
             parameters=[{'channel_type':channel_type,
-                         'serial_port': serial_port, 
+                         'serial_port': lidar_port, 
                          'serial_baudrate': serial_baudrate, 
                          'frame_id': frame_id,
                          'inverted': inverted, 

@@ -57,7 +57,7 @@ def generate_launch_description():
             name='sllidar_node',
             parameters=[{
                 'channel_type': channel_type,
-                'lidar_port': lidar_port, 
+                'serial_port': lidar_port, 
                 'serial_baudrate': serial_baudrate, 
                 'frame_id': frame_id,
                 'inverted': inverted, 

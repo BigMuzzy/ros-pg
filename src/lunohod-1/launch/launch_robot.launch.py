@@ -17,6 +17,8 @@ def generate_launch_description():
     package_name='lunohod-1'
 
     arduino_device = LaunchConfiguration('arduino_device')
+    lidar_port = LaunchConfiguration('lidar_port', default='/dev/ttyUSB1')
+
 
     # Robot State Publisher - Start immediately
     rsp = IncludeLaunchDescription(
@@ -35,7 +37,7 @@ def generate_launch_description():
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(
                     get_package_share_directory(package_name),'launch','rplidar_robust.launch.py'
-                )])
+                )]), launch_arguments={'lidar_port': lidar_port}.items()
             )
         ]
     )

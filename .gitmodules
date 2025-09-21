@@ -6,4 +6,4 @@
 	url = https://github.com/joshnewans/serial
 [submodule "src/diffdrive_arduino"]
 	path = src/diffdrive_arduino
-	url = https://github.com/RedstoneGithub/diffdrive_arduino.git
+	url = git@github.com:BigMuzzy/diffdrive_arduino.git

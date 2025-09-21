@@ -1,5 +1,8 @@
 amcl:
   ros__parameters:
+    set_initial_pose: false
+    always_reset_initial_pose: false
+    first_map_only: false
     use_sim_time: False
     alpha1: 0.2
     alpha2: 0.2
@@ -14,8 +17,8 @@ amcl:
     global_frame_id: "map"
     lambda_short: 0.1
     laser_likelihood_max_dist: 2.0
-    laser_max_range: 100.0
-    laser_min_range: -1.0
+    laser_max_range: 12.0
+    laser_min_range: 0.03
     laser_model_type: "likelihood_field"
     max_beams: 60
     max_particles: 2000
@@ -49,37 +52,19 @@ amcl_rclcpp_node:
 
 bt_navigator:
   ros__parameters:
-    use_sim_time: False
+    use_sim_time: false
     global_frame: map
     robot_base_frame: base_link
     odom_topic: /odom
-    enable_groot_monitoring: True
-    groot_zmq_publisher_port: 1666
-    groot_zmq_server_port: 1667
-    default_bt_xml_filename: "navigate_w_replanning_and_recovery.xml"
-    plugin_lib_names:
-    - nav2_compute_path_to_pose_action_bt_node
-    - nav2_follow_path_action_bt_node
-    - nav2_back_up_action_bt_node
-    - nav2_spin_action_bt_node
-    - nav2_wait_action_bt_node
-    - nav2_clear_costmap_service_bt_node
-    - nav2_is_stuck_condition_bt_node
-    - nav2_goal_reached_condition_bt_node
-    - nav2_goal_updated_condition_bt_node
-    - nav2_initial_pose_received_condition_bt_node
-    - nav2_reinitialize_global_localization_service_bt_node
-    - nav2_rate_controller_bt_node
-    - nav2_distance_controller_bt_node
-    - nav2_speed_controller_bt_node
-    - nav2_truncate_path_action_bt_node
-    - nav2_goal_updater_node_bt_node
-    - nav2_recovery_node_bt_node
-    - nav2_pipeline_sequence_bt_node
-    - nav2_round_robin_node_bt_node
-    - nav2_transform_available_condition_bt_node
-    - nav2_time_expired_condition_bt_node
-    - nav2_distance_traveled_condition_bt_node
+    bt_loop_duration: 10
+    default_server_timeout: 20
+    wait_for_service_timeout: 1000
+    action_server_result_timeout: 900.0
+    navigators: ["navigate_to_pose", "navigate_through_poses"]
+    navigate_to_pose:
+      plugin: "nav2_bt_navigator::NavigateToPoseNavigator"
+    navigate_through_poses:
+      plugin: "nav2_bt_navigator::NavigateThroughPosesNavigator"
 
 bt_navigator_rclcpp_node:
   ros__parameters:
@@ -110,6 +95,11 @@ controller_server:
     # DWB parameters
     FollowPath:
       plugin: "dwb_core::DWBLocalPlanner"
+      prune_plan: true
+      prune_distance: 1.0
+      forward_prune_distance: 2.5
+      #debug_trajectory_details: false  # Set to false for performance
+      trajectory_generator_name: dwb_plugins::StandardTrajectoryGenerator
       debug_trajectory_details: True
       min_vel_x: 0.0
       min_vel_y: 0.0
@@ -138,7 +128,7 @@ controller_server:
       trans_stopped_velocity: 0.25
       short_circuit_trajectory_evaluation: True
       stateful: True
-      critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
+      critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist", "PreferForward"]
       BaseObstacle.scale: 0.02
       PathAlign.scale: 32.0
       PathAlign.forward_point_distance: 0.1
@@ -157,6 +147,9 @@ controller_server_rclcpp_node:
 local_costmap:
   local_costmap:
     ros__parameters:
+      #always_send_full_costmap: false  # Better performance
+      footprint_padding: 0.01
+      transform_tolerance: 0.2
       update_frequency: 5.0
       publish_frequency: 2.0
       global_frame: odom
@@ -265,22 +258,26 @@ planner_server_rclcpp_node:
 
 behavior_server:
   ros__parameters:
-    costmap_topic: local_costmap/costmap_raw
-    footprint_topic: local_costmap/published_footprint
+    local_costmap_topic: local_costmap/costmap_raw
+    local_footprint_topic: local_costmap/published_footprint
+    global_costmap_topic: global_costmap/costmap_raw
+    global_footprint_topic: global_costmap/published_footprint
     cycle_frequency: 10.0
-    behavior_plugins: ["spin", "backup", "drive_on_heading", "wait"]
+    behavior_plugins: ["spin", "backup", "drive_on_heading", "assisted_teleop", "wait"]
     spin:
       plugin: "nav2_behaviors::Spin"
     backup:
       plugin: "nav2_behaviors::BackUp"
     drive_on_heading:
       plugin: "nav2_behaviors::DriveOnHeading"
+    assisted_teleop:
+      plugin: "nav2_behaviors::AssistedTeleop"
     wait:
       plugin: "nav2_behaviors::Wait"
     global_frame: odom
     robot_base_frame: base_link
-    transform_timeout: 0.1
-    use_sim_time: false  # Since you're using real robot
+    transform_tolerance: 0.1
+    use_sim_time: false
     simulate_ahead_time: 2.0
     max_rotational_vel: 1.0
     min_rotational_vel: 0.4

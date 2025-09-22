@@ -145,3 +145,27 @@ You should see these topics:
 Check with: `ros2 topic list`
 
 The robot should now be ready for teleoperation, navigation, or SLAM!
+
+## Main Launch Sequence
+
+For the complete autonomous navigation setup, run these commands in order:
+
+1. Launch the robot with hardware:
+```bash
+ros2 launch lunohod-1 launch_robot.launch.py video_device:=/dev/video0 lidar_port:=/dev/ttyUSB0 arduino_device:=/dev/ttyUSB1
+```
+
+2. Start SLAM mapping:
+```bash
+ros2 launch lunohod-1 online_async_launch.py use_sim_time:=false
+```
+
+3. Launch navigation stack:
+```bash
+ros2 launch lunohod-1 navigation_launch.py use_sim_time:=false
+```
+
+4. Open RViz for visualization:
+```bash
+rviz2 -d src/lunohod-1/config/main.rviz
+```

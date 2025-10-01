@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 30  # Reduced from 30 to reduce load
+    update_rate: 30
     # use_sim_time: false
 
     diff_cont:
@@ -13,6 +13,24 @@ diff_cont:
   ros__parameters:
 
     publish_rate: 50.0  # Reduced from 50.0
+
+    # VELOCITY LIMITS - Add these parameters:
+    linear:
+      x:
+        has_velocity_limits: true
+        max_velocity: 0.2         # 🔧 Limit max speed
+        min_velocity: -0.2
+        has_acceleration_limits: true
+        max_acceleration: 0.8     # 🔧 Smooth acceleration
+        min_acceleration: -0.8
+    angular:
+      z:
+        has_velocity_limits: true
+        max_velocity: 0.2         # 🔧 Limit turning speed
+        min_velocity: -0.2
+        has_acceleration_limits: true
+        max_acceleration: 1.5     # 🔧 Smooth turning
+        min_acceleration: -1.5
 
     base_frame_id: base_link
 

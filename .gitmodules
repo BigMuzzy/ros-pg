@@ -7,3 +7,6 @@
 [submodule "src/diffdrive_arduino"]
 	path = src/diffdrive_arduino
 	url = git@github.com:BigMuzzy/diffdrive_arduino.git
+[submodule "src/micro-ROS-Agent"]
+	path = src/micro-ROS-Agent
+	url = https://github.com/micro-ROS/micro-ROS-Agent.git

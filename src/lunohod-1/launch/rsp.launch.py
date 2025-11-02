@@ -16,7 +16,7 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
     use_ros2_control = LaunchConfiguration('use_ros2_control')
 
-    arduino_device = LaunchConfiguration('arduino_device')
+    ugv_driver_port = LaunchConfiguration('ugv_driver_port')
 
     # Process the URDF file
     pkg_path = os.path.join(get_package_share_directory('lunohod-1'))
@@ -24,7 +24,7 @@ def generate_launch_description():
     # robot_description_config = xacro.process_file(xacro_file).toxml()
     robot_description_config = Command([
         'xacro ', xacro_file,
-        ' arduino_device:=', arduino_device,
+        ' ugv_driver_port:=', ugv_driver_port,
         ' use_ros2_control:=', use_ros2_control,
         ' sim_mode:=', use_sim_time])
     
@@ -49,9 +49,9 @@ def generate_launch_description():
             default_value='true',
             description='Use ros2_control if true'),
         DeclareLaunchArgument(
-            'arduino_device',
+            'ugv_driver_port',
             default_value='/dev/ttyUSB0',
-            description='Arduino device path (e.g., /dev/ttyUSB0, /dev/ttyUSB1)'),
+            description='UGV driver USB device path (e.g., /dev/ttyUSB0, /dev/ttyUSB1)'),
 
         node_robot_state_publisher
     ])

@@ -17,10 +17,10 @@ def generate_launch_description():
 
     package_name = "lunohod-1"
 
-    arduino_device = LaunchConfiguration("arduino_device")
+    ugv_driver_port = LaunchConfiguration("ugv_driver_port", default="/dev/ttyUSB0")
     lidar_port = LaunchConfiguration("lidar_port", default="/dev/ttyUSB1")
 
-    # Robot State Publisher - Start immediately
+    # Robot State Publisher - Start immediately (no ros2_control needed for micro-ROS)
     rsp = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [
@@ -30,9 +30,9 @@ def generate_launch_description():
             ]
         ),
         launch_arguments={
-            "arduino_device": arduino_device,
+            "ugv_driver_port": ugv_driver_port,
             "use_sim_time": "false",
-            "use_ros2_control": "true",
+            "use_ros2_control": "false",
         }.items(),
     )
 
@@ -81,56 +81,20 @@ def generate_launch_description():
         package="twist_mux",
         executable="twist_mux",
         parameters=[twist_mux_params],
-        remappings=[("/cmd_vel_out", "/diff_cont/cmd_vel")],
+        remappings=[("/cmd_vel_out", "/cmd_vel")],
     )
 
-    # Controller Manager - Start after RSP is ready
-    robot_description = Command(
-        ["ros2 param get --hide-type /robot_state_publisher robot_description"]
-    )
-    controller_params_file = os.path.join(
-        get_package_share_directory(package_name), "config", "my_controllers.yaml"
-    )
-
-    controller_manager = Node(
-        package="controller_manager",
-        executable="ros2_control_node",
-        parameters=[{"robot_description": robot_description}, controller_params_file],
-        output={
-            "stdout": "screen",
-            "stderr": "screen",
-        },
+    # micro-ROS Agent - Start early to connect with microcontroller via serial
+    micro_ros_agent = Node(
+        package="micro_ros_agent",
+        executable="micro_ros_agent",
+        name="micro_ros_agent",
+        arguments=["serial", "--dev", ugv_driver_port, "-b", "115200", "-v6"],
+        output="screen",
     )
 
-    # Delay controller manager more to avoid conflicts
-    delayed_controller_manager = TimerAction(period=6.0, actions=[controller_manager])
-
-    # Controllers - Start after controller manager
-    diff_drive_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["diff_cont"],
-    )
-
-    delayed_diff_drive_spawner = RegisterEventHandler(
-        event_handler=OnProcessStart(
-            target_action=controller_manager,
-            on_start=[TimerAction(period=3.0, actions=[diff_drive_spawner])],
-        )
-    )
-
-    joint_broad_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["joint_broad"],
-    )
-
-    delayed_joint_broad_spawner = RegisterEventHandler(
-        event_handler=OnProcessStart(
-            target_action=controller_manager,
-            on_start=[TimerAction(period=2.0, actions=[joint_broad_spawner])],
-        )
-    )
+    # Delay micro-ROS agent to allow USB enumeration
+    delayed_micro_ros_agent = TimerAction(period=2.0, actions=[micro_ros_agent])
 
     return LaunchDescription(
         [
@@ -138,8 +102,6 @@ def generate_launch_description():
             twist_mux,
             rplidar,
             camera,
-            delayed_controller_manager,
-            delayed_diff_drive_spawner,
-            delayed_joint_broad_spawner,
+            delayed_micro_ros_agent,
         ]
     )

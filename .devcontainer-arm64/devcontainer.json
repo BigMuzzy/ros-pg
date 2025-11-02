@@ -31,6 +31,9 @@
 		"PULSE_SERVER": "${localEnv:PULSE_SERVER}",
 		"LIBGL_ALWAYS_SOFTWARE": "1" // Needed for software rendering of opengl
 	},
+	"mounts": [
+		"source=${localEnv:HOME}/.ssh,target=/home/ros/.ssh,type=bind,consistency=cached"
+	],
 	// Set *default* container specific settings.json values on container create.
 	"customizations": {
 		"vscode": {

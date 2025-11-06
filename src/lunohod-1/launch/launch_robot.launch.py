@@ -96,6 +96,14 @@ def generate_launch_description():
     # Delay micro-ROS agent to allow USB enumeration
     delayed_micro_ros_agent = TimerAction(period=2.0, actions=[micro_ros_agent])
 
+    # Joint State Publisher - publishes dummy joint states for visualization
+    # Remove this if your micro-ROS firmware publishes /joint_states
+    joint_state_publisher = Node(
+        package="joint_state_publisher",
+        executable="joint_state_publisher",
+        name="joint_state_publisher",
+    )
+
     return LaunchDescription(
         [
             rsp,
@@ -103,5 +111,6 @@ def generate_launch_description():
             rplidar,
             camera,
             delayed_micro_ros_agent,
+            joint_state_publisher,
         ]
     )

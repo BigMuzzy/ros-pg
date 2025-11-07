@@ -5,9 +5,6 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription, TimerAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import Command
-from launch.actions import RegisterEventHandler
-from launch.event_handlers import OnProcessStart, OnProcessExit
 from launch.substitutions import LaunchConfiguration
 
 from launch_ros.actions import Node
@@ -17,10 +14,13 @@ def generate_launch_description():
 
     package_name = "lunohod-1"
 
-    arduino_device = LaunchConfiguration("arduino_device")
+    # Launch configuration parameters
+    microros_device = LaunchConfiguration("microros_device", default="/dev/ttyUSB0")
+    microros_baud = LaunchConfiguration("microros_baud", default="115200")
     lidar_port = LaunchConfiguration("lidar_port", default="/dev/ttyUSB1")
 
     # Robot State Publisher - Start immediately
+    # NOTE: use_ros2_control set to false for direct micro-ROS integration
     rsp = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [
@@ -30,9 +30,8 @@ def generate_launch_description():
             ]
         ),
         launch_arguments={
-            "arduino_device": arduino_device,
             "use_sim_time": "false",
-            "use_ros2_control": "true",
+            "use_ros2_control": "false",  # Disabled for micro-ROS
         }.items(),
     )
 
@@ -73,7 +72,7 @@ def generate_launch_description():
         ],
     )
 
-    # Twist Mux - Start early
+    # Twist Mux - Combines navigation and joystick commands
     twist_mux_params = os.path.join(
         get_package_share_directory(package_name), "config", "twist_mux.yaml"
     )
@@ -81,65 +80,39 @@ def generate_launch_description():
         package="twist_mux",
         executable="twist_mux",
         parameters=[twist_mux_params],
-        remappings=[("/cmd_vel_out", "/diff_cont/cmd_vel")],
+        remappings=[("/cmd_vel_out", "/cmd_vel")],  # Direct to ESP32 micro-ROS
     )
 
-    # Controller Manager - Start after RSP is ready
-    robot_description = Command(
-        ["ros2 param get --hide-type /robot_state_publisher robot_description"]
-    )
-    controller_params_file = os.path.join(
-        get_package_share_directory(package_name), "config", "my_controllers.yaml"
-    )
-
-    controller_manager = Node(
-        package="controller_manager",
-        executable="ros2_control_node",
-        parameters=[{"robot_description": robot_description}, controller_params_file],
-        output={
-            "stdout": "screen",
-            "stderr": "screen",
-        },
+    # micro-ROS Agent - Connects to ESP32 via serial
+    micro_ros_agent = Node(
+        package='micro_ros_agent',
+        executable='micro_ros_agent',
+        name='micro_ros_agent',
+        arguments=['serial', '--dev', microros_device, '-b', microros_baud],
+        output='screen',
+        respawn=True,
+        respawn_delay=2.0,
     )
 
-    # Delay controller manager more to avoid conflicts
-    delayed_controller_manager = TimerAction(period=6.0, actions=[controller_manager])
-
-    # Controllers - Start after controller manager
-    diff_drive_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["diff_cont"],
-    )
-
-    delayed_diff_drive_spawner = RegisterEventHandler(
-        event_handler=OnProcessStart(
-            target_action=controller_manager,
-            on_start=[TimerAction(period=3.0, actions=[diff_drive_spawner])],
-        )
-    )
-
-    joint_broad_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["joint_broad"],
-    )
-
-    delayed_joint_broad_spawner = RegisterEventHandler(
-        event_handler=OnProcessStart(
-            target_action=controller_manager,
-            on_start=[TimerAction(period=2.0, actions=[joint_broad_spawner])],
-        )
+    # Joint State Converter - Converts encoder data to joint states for robot_state_publisher
+    joint_state_converter = Node(
+        package='lunohod-1',
+        executable='encoder_to_joint_states.py',
+        name='encoder_to_joint_state_converter',
+        parameters=[{
+            'wheel_radius': 0.0325,  # WHEEL_DIAMETER / 2 = 0.065 / 2
+            'counts_per_rev': 5400,  # ENCODER_CPR * GEAR_RATIO = 180 * 30
+        }],
+        output='screen',
     )
 
     return LaunchDescription(
         [
             rsp,
             twist_mux,
+            micro_ros_agent,
+            joint_state_converter,
             rplidar,
             camera,
-            delayed_controller_manager,
-            delayed_diff_drive_spawner,
-            delayed_joint_broad_spawner,
         ]
     )

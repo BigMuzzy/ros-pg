@@ -11,8 +11,14 @@ find_package(ament_cmake REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
+# Install Python scripts
+install(PROGRAMS
+  scripts/encoder_to_joint_states.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 install(
-  DIRECTORY config launch description worlds
+  DIRECTORY config launch description worlds scripts
   DESTINATION share/${PROJECT_NAME}
 )
 

@@ -1,9 +1,11 @@
+# Twist Mux Configuration for micro-ROS Integration
+# Output is remapped to /cmd_vel for direct ESP32 consumption
 twist_mux:
   ros__parameters:
-    use_stamped: true
+    use_stamped: false  # ESP32 expects geometry_msgs/Twist, not TwistStamped
     topics:
       navigation:
-        topic   : cmd_vel
+        topic   : nav_vel
         timeout : 0.5
         priority: 10
       joystick:

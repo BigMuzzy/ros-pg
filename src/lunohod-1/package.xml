@@ -15,6 +15,24 @@
   <exec_depend>rviz2</exec_depend>
   <exec_depend>xacro</exec_depend>
 
+  <!-- micro-ROS integration dependencies -->
+  <exec_depend>micro_ros_agent</exec_depend>
+  <exec_depend>twist_mux</exec_depend>
+
+  <!-- Navigation dependencies -->
+  <exec_depend>nav2_bringup</exec_depend>
+  <exec_depend>slam_toolbox</exec_depend>
+
+  <!-- Sensor dependencies -->
+  <exec_depend>rplidar_ros</exec_depend>
+
+  <!-- Python for converter nodes -->
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 

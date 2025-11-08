@@ -106,13 +106,22 @@ def generate_launch_description():
         output='screen',
     )
 
+    # Odometry to TF Broadcaster - Publishes odom->base_link transform
+    odom_to_tf = Node(
+        package='lunohod-1',
+        executable='odom_to_tf.py',
+        name='odom_to_tf_broadcaster',
+        output='screen',
+    )
+
     return LaunchDescription(
         [
             rsp,
             twist_mux,
             micro_ros_agent,
             joint_state_converter,
-            rplidar,
-            camera,
+            odom_to_tf,
+#            rplidar,
+#            camera,
         ]
     )

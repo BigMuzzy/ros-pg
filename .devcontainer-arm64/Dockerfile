@@ -27,6 +27,8 @@ RUN apt-get update \
    && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-teleop-twist-keyboard \
    && apt-get -y install --no-install-recommends v4l-utils \
    && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-v4l2-camera \
+   && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-micro-ros-msgs \
+   && apt-get -y install --no-install-recommends ros-${ROS_DISTRO}-topic-tools \
 #    #
 #    # Clean up
    && apt-get autoremove -y \

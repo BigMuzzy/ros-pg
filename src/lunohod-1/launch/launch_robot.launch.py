@@ -107,11 +107,32 @@ def generate_launch_description():
     )
 
     # Odometry to TF Broadcaster - Publishes odom->base_link transform
-    odom_to_tf = Node(
+    # NOTE: Disabled when using EKF, as EKF publishes this transform
+    # odom_to_tf = Node(
+    #     package='lunohod-1',
+    #     executable='odom_to_tf.py',
+    #     name='odom_to_tf_broadcaster',
+    #     output='screen',
+    # )
+
+    # IMU Timestamp Synchronization - Converts ESP32 uptime to ROS time
+    imu_timestamp_sync = Node(
         package='lunohod-1',
-        executable='odom_to_tf.py',
-        name='odom_to_tf_broadcaster',
+        executable='imu_timestamp_sync.py',
+        name='imu_timestamp_sync',
         output='screen',
+    )
+
+    # EKF Sensor Fusion - Fuses wheel odometry and IMU data
+    ekf_config = os.path.join(
+        get_package_share_directory(package_name), "config", "ekf.yaml"
+    )
+    ekf_node = Node(
+        package='robot_localization',
+        executable='ekf_node',
+        name='ekf_filter_node',
+        output='screen',
+        parameters=[ekf_config],
     )
 
     return LaunchDescription(
@@ -120,7 +141,9 @@ def generate_launch_description():
             twist_mux,
             micro_ros_agent,
             joint_state_converter,
-            odom_to_tf,
+            # odom_to_tf,  # Disabled - EKF handles odom->base_link TF
+            imu_timestamp_sync,
+            ekf_node,
 #            rplidar,
 #            camera,
         ]

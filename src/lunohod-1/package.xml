@@ -22,6 +22,7 @@
   <!-- Navigation dependencies -->
   <exec_depend>nav2_bringup</exec_depend>
   <exec_depend>slam_toolbox</exec_depend>
+  <exec_depend>robot_localization</exec_depend>
 
   <!-- Sensor dependencies -->
   <exec_depend>rplidar_ros</exec_depend>

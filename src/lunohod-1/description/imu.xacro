@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- IMU sensor (mounted on ESP32 driver board on chassis) -->
+
+    <!-- IMU positioning relative to chassis -->
+    <!-- Adjust these values based on actual IMU location on your robot -->
+    <xacro:property name="imu_offset_x" value="0.040"/>
+    <xacro:property name="imu_offset_y" value="-0.02"/>
+    <xacro:property name="imu_offset_z" value="0.065"/>
+
+    <!-- IMU Link -->
+    <joint name="imu_joint" type="fixed">
+        <parent link="chassis"/>
+        <child link="imu_link"/>
+        <origin xyz="${imu_offset_x} ${imu_offset_y} ${imu_offset_z}" rpy="0 0 ${pi}"/>
+    </joint>
+
+    <link name="imu_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.02 0.02 0.01"/>
+            </geometry>
+            <material name="red">
+                <color rgba="1 0 0 1"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.02 0.02 0.01"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="0.001"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001"/>
+        </inertial>
+    </link>
+
+</robot>

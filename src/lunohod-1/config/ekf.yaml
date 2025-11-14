@@ -2,16 +2,16 @@
 # Extended Kalman Filter configuration for sensor fusion
 # Combines wheel odometry from ESP32 with IMU data for improved localization
 #
-# OPTIONAL: To enable, add robot_localization to package.xml and launch file
-# This configuration fuses /ugv/odom (wheel odometry) with /ugv/imu (IMU data)
+# This configuration fuses /ugv/odom (wheel odometry) with /imu (synchronized IMU data)
 
 ekf_filter_node:
   ros__parameters:
+    use_sim_time: false
     frequency: 30.0
     sensor_timeout: 0.1
     two_d_mode: true
     publish_tf: true
-    publish_acceleration: false
+    publish_acceleration: true
 
     # Frame configuration
     map_frame: map
@@ -35,12 +35,14 @@ ekf_filter_node:
     odom0_relative: false
     odom0_queue_size: 10
 
-    # IMU from ESP32
-    imu0: /ugv/imu
+    # IMU from ESP32 (synchronized timestamp)
+    # Note: ESP32 IMU orientation has -1 covariance (not calibrated), so we don't use it
+    # We only use angular velocity (yaw rate) and linear acceleration
+    imu0: /imu
     imu0_config: [false, false, false,    # Don't use position from IMU
-                  true,  true,  true,     # Use roll, pitch, yaw orientation
+                  false, false, false,    # Don't use orientation (not calibrated, -1 covariance)
                   false, false, false,    # Don't use velocity from IMU
-                  true,  true,  true,     # Use angular velocities
+                  false, false, true,     # Use yaw angular velocity only
                   true,  true,  false]    # Use linear accelerations (x, y only for 2D)
     imu0_differential: false
     imu0_relative: false

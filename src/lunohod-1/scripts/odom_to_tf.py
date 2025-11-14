@@ -51,8 +51,9 @@ class OdomToTF(Node):
         # Create transform message
         t = TransformStamped()
 
-        # Header
-        t.header.stamp = msg.header.stamp
+        # Header - use current ROS time instead of ESP32 timestamp
+        # ESP32 uses uptime, not synchronized ROS time
+        t.header.stamp = self.get_clock().now().to_msg()
         t.header.frame_id = msg.header.frame_id  # 'odom'
         t.child_frame_id = msg.child_frame_id    # 'base_link'
 

@@ -15,8 +15,8 @@ def generate_launch_description():
     package_name = "lunohod-1"
 
     # Launch configuration parameters
-    microros_device = LaunchConfiguration("microros_device", default="/dev/ttyUSB0")
-    microros_baud = LaunchConfiguration("microros_baud", default="115200")
+    microros_device = LaunchConfiguration("microros_device", default="/dev/ttyUSB1")
+    microros_baud = LaunchConfiguration("microros_baud", default="921600")
     lidar_port = LaunchConfiguration("lidar_port", default="/dev/ttyUSB1")
 
     # Robot State Publisher - Start immediately

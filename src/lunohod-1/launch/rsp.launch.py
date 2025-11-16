@@ -42,6 +42,16 @@ def generate_launch_description():
         ]
     )
 
+    node_joint_state_publisher = Node(
+        package='joint_state_publisher',
+        executable='joint_state_publisher',
+        name='joint_state_publisher',
+        parameters=[{
+            'use_sim_time': use_sim_time,
+            'rate': 30  # Publish at 30Hz
+        }],
+    )
+
     # Launch!
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -52,10 +62,7 @@ def generate_launch_description():
             'use_ros2_control',
             default_value='true',
             description='Use ros2_control if true'),
-        DeclareLaunchArgument(
-            'arduino_device',
-            default_value='/dev/ttyUSB0',
-            description='Arduino device path (e.g., /dev/ttyUSB0, /dev/ttyUSB1)'),
 
-        node_robot_state_publisher
+        node_robot_state_publisher,
+        node_joint_state_publisher
     ])

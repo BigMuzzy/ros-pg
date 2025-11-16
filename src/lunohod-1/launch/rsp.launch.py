@@ -16,8 +16,6 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
     use_ros2_control = LaunchConfiguration('use_ros2_control')
 
-    arduino_device = LaunchConfiguration('arduino_device')
-
     # Process the URDF file
     pkg_path = os.path.join(get_package_share_directory('lunohod-1'))
     xacro_file = os.path.join(pkg_path,'description','robot.urdf.xacro')
@@ -48,10 +46,6 @@ def generate_launch_description():
             'use_ros2_control',
             default_value='true',
             description='Use ros2_control if true'),
-        DeclareLaunchArgument(
-            'arduino_device',
-            default_value='/dev/ttyUSB0',
-            description='Arduino device path (e.g., /dev/ttyUSB0, /dev/ttyUSB1)'),
 
         node_robot_state_publisher
     ])

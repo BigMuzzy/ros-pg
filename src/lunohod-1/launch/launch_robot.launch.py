@@ -15,9 +15,9 @@ def generate_launch_description():
     package_name = "lunohod-1"
 
     # Launch configuration parameters
-    microros_device = LaunchConfiguration("microros_device", default="/dev/ttyUSB1")
+    microros_device = LaunchConfiguration("microros_device", default="/dev/serial/by-id/usb-Silicon_Labs_CP2102N_USB_to_UART_Bridge_Controller_02640c7312daef11ad31593dc8728757-if00-port0")
     microros_baud = LaunchConfiguration("microros_baud", default="921600")
-    lidar_port = LaunchConfiguration("lidar_port", default="/dev/ttyUSB1")
+    lidar_port = LaunchConfiguration("lidar_port", default="dev/serial/by-id/usb-Silicon_Labs_CP2102N_USB_to_UART_Bridge_Controller_f86253bee863ef11a2a1e2a9c169b110-if00-port0")
 
     # Robot State Publisher - Start immediately
     # NOTE: use_ros2_control set to false for direct micro-ROS integration
@@ -100,8 +100,8 @@ def generate_launch_description():
         executable='encoder_to_joint_states.py',
         name='encoder_to_joint_state_converter',
         parameters=[{
-            'wheel_radius': 0.0325,  # WHEEL_DIAMETER / 2 = 0.065 / 2
-            'counts_per_rev': 5400,  # ENCODER_CPR * GEAR_RATIO = 180 * 30
+            'wheel_radius': 0.034,  # WHEEL_DIAMETER / 2 = 0.065 / 2
+            'counts_per_rev': 1167,  # ENCODER_CPR * GEAR_RATIO = 180 * 30
         }],
         output='screen',
     )

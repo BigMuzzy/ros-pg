@@ -144,7 +144,7 @@ def generate_launch_description():
             # odom_to_tf,  # Disabled - EKF handles odom->base_link TF
             imu_timestamp_sync,
             ekf_node,
-#            rplidar,
-#            camera,
+            rplidar,
+            camera,
         ]
     )

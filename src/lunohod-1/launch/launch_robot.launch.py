@@ -16,7 +16,7 @@ def generate_launch_description():
 
     # Launch configuration parameters
     microros_device = LaunchConfiguration("microros_device", default="/dev/serial/by-id/usb-Silicon_Labs_CP2102N_USB_to_UART_Bridge_Controller_02640c7312daef11ad31593dc8728757-if00-port0")
-    microros_baud = LaunchConfiguration("microros_baud", default="921600")
+    microros_baud = LaunchConfiguration("microros_baud", default="2000000")
     lidar_port = LaunchConfiguration("lidar_port", default="dev/serial/by-id/usb-Silicon_Labs_CP2102N_USB_to_UART_Bridge_Controller_f86253bee863ef11a2a1e2a9c169b110-if00-port0")
 
     # Robot State Publisher - Start immediately

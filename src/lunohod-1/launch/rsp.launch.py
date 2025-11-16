@@ -42,16 +42,6 @@ def generate_launch_description():
         ]
     )
 
-    node_joint_state_publisher = Node(
-        package='joint_state_publisher',
-        executable='joint_state_publisher',
-        name='joint_state_publisher',
-        parameters=[{
-            'use_sim_time': use_sim_time,
-            'rate': 30  # Publish at 30Hz
-        }],
-    )
-
     # Launch!
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -63,6 +53,5 @@ def generate_launch_description():
             default_value='true',
             description='Use ros2_control if true'),
 
-        node_robot_state_publisher,
-        node_joint_state_publisher
+        node_robot_state_publisher
     ])

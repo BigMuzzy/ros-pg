@@ -21,8 +21,6 @@ sudo apt install ros-kilted-joy
 
 ## Quick Start
 
-### Method 1: Launch Teleop Separately
-
 **Step 1: Start the robot system**
 ```bash
 # Terminal 1: Start all robot components
@@ -31,25 +29,20 @@ ros2 launch lunohod-2 bringup.launch.py
 
 **Step 2: Start teleoperation**
 
-**Keyboard Mode:**
+### Keyboard Control (Recommended for Testing)
+
 ```bash
-# Terminal 2: Keyboard teleop
-ros2 launch lunohod-2 teleop.launch.py
+# Terminal 2: Keyboard teleop (run directly, NOT through launch file)
+ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args --remap cmd_vel:=/ugv/cmd_vel
 ```
 
-**Joystick Mode:**
+**Note:** Keyboard teleop must be run directly in a terminal because it requires interactive keyboard input.
+
+### Joystick Control
+
 ```bash
 # Terminal 2: Joystick teleop
-ros2 launch lunohod-2 teleop.launch.py teleop_mode:=joystick
-```
-
-### Method 2: Quick Keyboard Control
-
-If you just want quick keyboard control without the launch file:
-
-```bash
-# Remap cmd_vel to /ugv/cmd_vel
-ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args --remap cmd_vel:=/ugv/cmd_vel
+ros2 launch lunohod-2 teleop.launch.py
 ```
 
 ## Keyboard Controls
@@ -107,25 +100,20 @@ enable_button: 4  # Change enable button (LB = 4)
 
 ## Launch File Parameters
 
-The teleop launch file supports the following parameters:
+The joystick teleop launch file supports the following parameters:
 
 ```bash
-# Teleop mode selection
-ros2 launch lunohod-2 teleop.launch.py teleop_mode:=keyboard  # or joystick
-
-# Custom velocity limits
-ros2 launch lunohod-2 teleop.launch.py \
-  max_linear:=0.7 \
-  max_angular:=1.5
+# Default launch (joystick on /dev/input/js0)
+ros2 launch lunohod-2 teleop.launch.py
 
 # Custom cmd_vel topic (if not using /ugv/cmd_vel)
 ros2 launch lunohod-2 teleop.launch.py cmd_vel_topic:=/custom_cmd_vel
 
 # Custom joystick device
-ros2 launch lunohod-2 teleop.launch.py \
-  teleop_mode:=joystick \
-  joy_device:=/dev/input/js1
+ros2 launch lunohod-2 teleop.launch.py joy_device:=/dev/input/js1
 ```
+
+**Note:** Velocity limits are configured in `config/teleop.yaml`, not as launch parameters.
 
 ## Troubleshooting
 

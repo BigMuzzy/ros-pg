@@ -20,6 +20,7 @@ import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, TimerAction
+from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration, Command
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
@@ -55,11 +56,18 @@ def generate_launch_description():
         description='Use simulation time'
     )
 
+    use_rviz_arg = DeclareLaunchArgument(
+        'use_rviz',
+        default_value='false',
+        description='Launch RViz for visualization'
+    )
+
     # Get launch configurations
     microros_device = LaunchConfiguration('microros_device')
     microros_baud = LaunchConfiguration('microros_baud')
     lidar_port = LaunchConfiguration('lidar_port')
     use_sim_time = LaunchConfiguration('use_sim_time')
+    use_rviz = LaunchConfiguration('use_rviz')
 
     # Robot Description
     urdf_file = os.path.join(pkg_lunohod2, 'description', 'lunohod2.urdf.xacro')
@@ -116,15 +124,28 @@ def generate_launch_description():
         ]
     )
 
+    # Node 4: RViz (optional)
+    rviz_config = os.path.join(pkg_lunohod2, 'config', 'robot_view.rviz')
+    rviz_node = Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        arguments=['-d', rviz_config],
+        output='screen',
+        condition=IfCondition(use_rviz)
+    )
+
     return LaunchDescription([
         # Arguments
         microros_device_arg,
         microros_baud_arg,
         lidar_port_arg,
         use_sim_time_arg,
+        use_rviz_arg,
 
         # Nodes
         robot_state_publisher_node,
         micro_ros_agent_node,
         rplidar_node,
+        rviz_node,
     ])

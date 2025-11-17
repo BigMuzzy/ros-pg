@@ -45,12 +45,13 @@ def generate_launch_description():
     )
 
     # RViz Node
+    rviz_config = os.path.join(pkg_dir, 'config', 'robot_view.rviz')
     rviz_node = Node(
         package='rviz2',
         executable='rviz2',
         name='rviz2',
         output='screen',
-        arguments=['-d', os.path.join(pkg_dir, 'config', 'display.rviz')] if os.path.exists(os.path.join(pkg_dir, 'config', 'display.rviz')) else []
+        arguments=['-d', rviz_config] if os.path.exists(rviz_config) else []
     )
 
     return LaunchDescription([

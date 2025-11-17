@@ -13,9 +13,14 @@ install(DIRECTORY
   launch
   config
   description
-  scripts
   doc
   DESTINATION share/${PROJECT_NAME}/
+)
+
+# Install Python scripts as executables
+install(PROGRAMS
+  scripts/timestamp_relay.py
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)

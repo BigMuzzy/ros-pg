@@ -135,6 +135,16 @@ def generate_launch_description():
         ]
     )
 
+    # Node 3.5: Timestamp Relay (re-timestamp micro-ROS messages)
+    # Converts MCU timestamps to system timestamps for TF consistency
+    timestamp_relay_node = Node(
+        package='lunohod-2',
+        executable='timestamp_relay.py',
+        name='timestamp_relay',
+        output='screen',
+        condition=IfCondition(use_ekf)
+    )
+
     # Node 4: EKF Sensor Fusion (optional, Phase 2+)
     ekf_config = os.path.join(pkg_lunohod2, 'config', 'ekf.yaml')
     ekf_node = Node(
@@ -169,6 +179,7 @@ def generate_launch_description():
         # Nodes
         robot_state_publisher_node,
         micro_ros_agent_node,
+        timestamp_relay_node,
         rplidar_node,
         ekf_node,
         rviz_node,

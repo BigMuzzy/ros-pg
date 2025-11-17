@@ -7,13 +7,17 @@ This launch file starts all essential components for the robot:
 1. Robot State Publisher (URDF/TF)
 2. micro-ROS Agent (chassis communication)
 3. RPLidar C1 Driver (laser scanner)
+4. EKF Sensor Fusion (optional, Phase 2+)
 
 Usage:
     ros2 launch lunohod-2 bringup.launch.py
+    ros2 launch lunohod-2 bringup.launch.py use_ekf:=true
 
 Optional arguments:
     microros_device:=/dev/ttyUSB0
     lidar_port:=/dev/ttyUSB1
+    use_ekf:=true
+    use_rviz:=true
 """
 
 import os
@@ -62,12 +66,19 @@ def generate_launch_description():
         description='Launch RViz for visualization'
     )
 
+    use_ekf_arg = DeclareLaunchArgument(
+        'use_ekf',
+        default_value='false',
+        description='Launch EKF for sensor fusion (Phase 2+)'
+    )
+
     # Get launch configurations
     microros_device = LaunchConfiguration('microros_device')
     microros_baud = LaunchConfiguration('microros_baud')
     lidar_port = LaunchConfiguration('lidar_port')
     use_sim_time = LaunchConfiguration('use_sim_time')
     use_rviz = LaunchConfiguration('use_rviz')
+    use_ekf = LaunchConfiguration('use_ekf')
 
     # Robot Description
     urdf_file = os.path.join(pkg_lunohod2, 'description', 'lunohod2.urdf.xacro')
@@ -124,7 +135,18 @@ def generate_launch_description():
         ]
     )
 
-    # Node 4: RViz (optional)
+    # Node 4: EKF Sensor Fusion (optional, Phase 2+)
+    ekf_config = os.path.join(pkg_lunohod2, 'config', 'ekf.yaml')
+    ekf_node = Node(
+        package='robot_localization',
+        executable='ekf_node',
+        name='ekf_filter_node',
+        output='screen',
+        parameters=[ekf_config, {'use_sim_time': use_sim_time}],
+        condition=IfCondition(use_ekf)
+    )
+
+    # Node 5: RViz (optional)
     rviz_config = os.path.join(pkg_lunohod2, 'config', 'robot_view.rviz')
     rviz_node = Node(
         package='rviz2',
@@ -142,10 +164,12 @@ def generate_launch_description():
         lidar_port_arg,
         use_sim_time_arg,
         use_rviz_arg,
+        use_ekf_arg,
 
         # Nodes
         robot_state_publisher_node,
         micro_ros_agent_node,
         rplidar_node,
+        ekf_node,
         rviz_node,
     ])

@@ -1,0 +1,124 @@
+### EKF Configuration for Lunohod-2
+### Fuses wheel odometry and IMU data
+
+ekf_filter_node:
+  ros__parameters:
+    # Filter frequency (Hz) - matches sensor rate
+    frequency: 50.0
+
+    # Sensor timeout - if no data for this duration, sensor is considered failed
+    sensor_timeout: 0.2
+
+    # Frame configuration
+    # For differential drive robot: world_frame should be odom
+    map_frame: map
+    odom_frame: odom
+    base_link_frame: base_link
+    world_frame: odom
+
+    # Transform publishing
+    publish_tf: true
+    publish_acceleration: false
+
+    # Diagnostic settings
+    print_diagnostics: true
+    debug: false
+
+    # -------------------------------------------------------------------
+    # Odometry Sensor 0: Wheel Odometry from micro-ROS
+    # -------------------------------------------------------------------
+    odom0: /ugv/odom
+
+    # State vector: [x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az]
+    # Use wheel odometry for velocities only (position and orientation drift over time)
+    odom0_config: [false, false, false,    # x, y, z position (don't use, drifts)
+                   false, false, false,    # roll, pitch, yaw (don't use from encoders)
+                   true,  true,  false,    # vx, vy, vz (USE linear velocities)
+                   false, false, true,     # vroll, vpitch, vyaw (USE yaw velocity)
+                   false, false, false]    # ax, ay, az (accelerations)
+
+    odom0_differential: false
+    odom0_relative: false
+    odom0_queue_size: 10
+
+    # Manual covariance override (sensor provides all zeros)
+    # Higher values = less trust in measurement
+    # Order: x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az
+    odom0_pose_rejection_threshold: 5.0
+    odom0_twist_rejection_threshold: 1.0
+
+    # -------------------------------------------------------------------
+    # IMU Sensor 0: IMU from micro-ROS
+    # Note: IMU does NOT provide orientation (covariance = -1.0)
+    # Only angular velocity and linear acceleration available
+    # -------------------------------------------------------------------
+    imu0: /ugv/imu
+
+    # IMU configuration
+    # Cannot use orientation (not provided by sensor)
+    imu0_config: [false, false, false,     # x, y, z position
+                  false, false, false,     # roll, pitch, yaw (NOT AVAILABLE from this IMU)
+                  false, false, false,     # vx, vy, vz
+                  false, false, true,      # vroll, vpitch, vyaw (USE yaw angular velocity)
+                  true,  true,  true]      # ax, ay, az (USE linear acceleration)
+
+    imu0_differential: false
+    imu0_relative: false
+    imu0_queue_size: 10
+
+    # Remove gravitational acceleration from IMU readings
+    # Our IMU shows ~9.8 m/s² on z-axis when stationary
+    imu0_remove_gravitational_acceleration: true
+
+    # Rejection thresholds
+    imu0_pose_rejection_threshold: 0.8
+    imu0_twist_rejection_threshold: 0.8
+    imu0_linear_acceleration_rejection_threshold: 0.8
+
+    # -------------------------------------------------------------------
+    # Process Noise Covariance (Q matrix)
+    # -------------------------------------------------------------------
+    # Diagonal 15x15 matrix
+    # Higher values = trust the process model less, rely more on measurements
+    # Lower values = trust the process model more
+    #
+    # Order: x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az
+
+    process_noise_covariance: [0.05,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
+                               0.0,   0.05,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
+                               0.0,   0.0,   0.06,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
+                               0.0,   0.0,   0.0,   0.03,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
+                               0.0,   0.0,   0.0,   0.0,   0.03,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
+                               0.0,   0.0,   0.0,   0.0,   0.0,   0.06,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
+                               0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.025, 0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
+                               0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.025, 0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
+                               0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.04,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
+                               0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.01,  0.0,   0.0,   0.0,   0.0,   0.0,
+                               0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.01,  0.0,   0.0,   0.0,   0.0,
+                               0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.02,  0.0,   0.0,   0.0,
+                               0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.01,  0.0,   0.0,
+                               0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.01,  0.0,
+                               0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.015]
+
+    # -------------------------------------------------------------------
+    # Initial State Covariance (P matrix)
+    # -------------------------------------------------------------------
+    # Diagonal 15x15 matrix
+    # Represents initial uncertainty in each state variable
+    # Use small values (high confidence) for known initial state
+
+    initial_estimate_covariance: [1e-9, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                                   0.0,  1e-9, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                                   0.0,  0.0,  1e-9, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                                   0.0,  0.0,  0.0,  1e-9, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                                   0.0,  0.0,  0.0,  0.0,  1e-9, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                                   0.0,  0.0,  0.0,  0.0,  0.0,  1e-9, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                                   0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  1e-9, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                                   0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  1e-9, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                                   0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  1e-9, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                                   0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  1e-9, 0.0,  0.0,  0.0,  0.0,  0.0,
+                                   0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  1e-9, 0.0,  0.0,  0.0,  0.0,
+                                   0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  1e-9, 0.0,  0.0,  0.0,
+                                   0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  1e-9, 0.0,  0.0,
+                                   0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  1e-9, 0.0,
+                                   0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  1e-9]

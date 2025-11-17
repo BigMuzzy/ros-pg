@@ -1,0 +1,39 @@
+/**:
+  ros__parameters:
+    # Joystick teleop configuration for lunohod-2
+
+    # Joystick axes mapping (Xbox controller layout)
+    axis_linear:
+      x: 1  # Left stick vertical (forward/backward)
+
+    axis_angular:
+      yaw: 0  # Left stick horizontal (rotation)
+
+    # Velocity scaling
+    scale_linear:
+      x: 0.5  # Max linear velocity: 0.5 m/s
+
+    scale_linear_turbo:
+      x: 1.0  # Turbo linear velocity: 1.0 m/s
+
+    scale_angular:
+      yaw: 1.0  # Max angular velocity: 1.0 rad/s
+
+    scale_angular_turbo:
+      yaw: 1.5  # Turbo angular velocity: 1.5 rad/s
+
+    # Enable/disable buttons (Xbox controller)
+    enable_button: 4  # LB (left bumper)
+    enable_turbo_button: 5  # RB (right bumper)
+
+    # Require enable button to be held for safety
+    require_enable_button: true
+
+    # Inverted axes (if needed)
+    inverted_reverse: false
+
+    # Publishing settings
+    publish_stamped_twist: false
+
+    # Command timeout
+    command_timeout: 0.5  # Stop robot if no command received for 0.5s
